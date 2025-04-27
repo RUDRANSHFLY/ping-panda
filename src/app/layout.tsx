@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Providers } from "../components/providers";
+import { Providers } from "@/components/providers";
 import { Alkatra } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 
 import "./globals.css";
 
@@ -20,10 +21,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`antialiased ${alkatara.className}`}>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={`antialiased ${alkatara.className}`}>
+          <Providers>{children}</Providers>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

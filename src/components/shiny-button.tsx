@@ -19,7 +19,7 @@ const ShinnyButton = ({
     <Link
       href={href ?? "#"}
       className={cn(
-        "group relative flex transform items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-md border border-white bg-fuchsia-700 px-8 py-2 text-base/7 font-medium text-white transition-all duration-300 hover:ring-2 hover:ring-fuchsia-700 hover:ring-offset-2 focus:outline-none focus:ring-2 focus:ring-offset-2",
+        "group relative flex transform items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-md border border-white bg-fuchsia-700 px-8 text-base/7 font-medium text-white transition-all duration-300 hover:ring-2 hover:ring-fuchsia-700 hover:ring-offset-2 focus:outline-none focus:ring-2 focus:ring-offset-2",
         className
       )}
       {...props}
