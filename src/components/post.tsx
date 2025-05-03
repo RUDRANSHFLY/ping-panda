@@ -35,7 +35,7 @@ export const RecentPost = () => {
         </p>
       ) : recentPost ? (
         <p className="text-[#ececf399] text-base/6">
-          Your recent post: "{recentPost.name}"
+          Your recent post: {recentPost.name}
         </p>
       ) : (
         <p className="text-[#ececf399] text-base/6">
