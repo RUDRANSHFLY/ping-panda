@@ -23,9 +23,14 @@ const databaseMiddleware = j.middleware(async ({ c, next }) => {
   return await next({ db })
 })
 
+const authMiddleware = j.middleware(({next}) => {
+  return next({})
+})
+
 /**
  * Public (unauthenticated) procedures
  *
  * This is the base piece you use to build new queries and mutations on your API.
  */
 export const publicProcedure = j.procedure.use(databaseMiddleware)
+export const privateProcedure = publicProcedure.use(authMiddleware)

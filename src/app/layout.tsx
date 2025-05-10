@@ -23,8 +23,11 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`antialiased ${alkatara.className}`}>
+        <body className={`antialiased ${alkatara.className} min-h-[calc(100vh-1px)] flex flex-col`}>
+         <main className="relative flex-1 flex flex-col">
+
           <Providers>{children}</Providers>
+         </main>
         </body>
       </html>
     </ClerkProvider>

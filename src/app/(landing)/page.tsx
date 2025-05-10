@@ -10,6 +10,7 @@ import DiscordMessage from "@/components/discord-message";
 import Image from "next/image";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { Icons } from "@/components/icons";
 
 const Page = () => {
   const codeSnippet = `await fetch("http://localhost:3000/api/v1/events", {
@@ -129,7 +130,9 @@ const Page = () => {
             <h2 className="text-center text-base/7 font-semibold text-fuchsia-600">
               Intitutive Monitoring
             </h2>
-            <Heading className="mt-2">Stay ahead with real time insights</Heading>
+            <Heading className="mt-2">
+              Stay ahead with real time insights
+            </Heading>
           </div>
           <div className="grid gap-4 lg:grid-cols-3 lg:grid-rows-2">
             {/* first bento grid element */}
@@ -265,49 +268,91 @@ const Page = () => {
                   </div>
                 </div>
               </div>
-              
-              <div className="pointer-events-none absolute inset-px rounded-lg shadow-ring ring-1 ring-black/5 max-lg:rounded-b-[2rem] lg:rounded-r-[2rem]" />
 
+              <div className="pointer-events-none absolute inset-px rounded-lg shadow-ring ring-1 ring-black/5 max-lg:rounded-b-[2rem] lg:rounded-r-[2rem]" />
             </div>
           </div>
         </MaxWidthWrapper>
       </section>
       {/* customer review*/}
       <section className="relative py-24 sm:py-32 bg-white">
-          <MaxWidthWrapper className="flex flex-col items-center gap-16 sm:gap-20">
-              <div>
-                <h2 className="text-center text-base/7 font-semibold text-fuchsia-600">
-                  Real-World Experiences 
-                </h2>
-                <Heading>
-                  What our customers say
-                  </Heading>
+        <MaxWidthWrapper className="flex flex-col items-center gap-16 sm:gap-20">
+          <div>
+            <h2 className="text-center text-base/7 font-semibold text-fuchsia-600">
+              Real-World Experiences
+            </h2>
+            <Heading>What our customers say</Heading>
+          </div>
+
+          <div className="mx-auto grid max-w-2xl grid-cols-1 px-4 lg:mx-0 lg:max-w-none lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-200">
+            {/* Customer Review */}
+            <div className="flex flex-col flex-auto gap-4 bg-fuchsia-50 p-6 sm:p-8 lg:p-16 rounded-b-[2rem]lg:rounded-bl-none lg:rounded-r-[2rem]">
+              <div className="flex gap-0.5 mb-2 justify-center lg:justify-start">
+                <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
+                <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
+                <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
+                <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
+                <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
               </div>
+              <p className="text-base sm:text-lg lg:text-lg/8 font-medium tracking-tight text-fuchsia-950 text-center lg:text-left text-pretty">
+                PingPanda has been a game changer for me. I&apos;ve Been using
+                it for two months now and seeing sales pop up in real time is
+                super satisfying.
+              </p>
 
-              <div className="mx-auto grid max-w-2xl grid-cols-1 px-4 lg:mx-0 lg:max-w-none lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-200">
-                        {/* Customer Review */}
-                        <div className="flex flex-col flex-auto gap-4 bg-fuchsia-50 p-6 sm:p-8 lg:p-16 rounded-t-[2rem]lg:rounded-tr-none lg:rounded-l-[2rem]">
-                          <div className="flex gap-0.5 mb-2 justify-center lg:justify-start">
-                            <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
-                            <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
-                            <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
-                            <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
-                            <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
-                          </div>
-                          <p className="text-base sm:text-lg lg:text-lg/8 font-medium tracking-tight text-fuchsia-950 text-center lg:text-left text-pretty">
-                            PingPanda has been a game changer for me.
-                            I&apos;ve Been using it for two months now and seeing sales pop up in real time
-                            is super satisfying.
-                          </p>
-
-                          <div className="flex flex-col justify-center lg:justify-start sm:flex-row items-center sm:items-start gap-10 mt-2">
-
-                          </div>
-                        </div>
-
+              <div className="flex flex-col justify-center lg:justify-start sm:flex-row items-center sm:items-start gap-4 mt-2">
+                <Image
+                  src={"/user-2.png"}
+                  alt="user-2"
+                  width={48}
+                  height={48}
+                  className="rounded-full object-cover"
+                />
+                <div className="flex flex-col items-center sm:items-start">
+                  <p className="font-semibold flex items-center">
+                    Freya Larrson
+                    <Icons.verficationBadge className="size-4 inline-block ml-1.5" />
+                  </p>
+                  <p className="text-sm text-gray-600">@itsfreya</p>
+                </div>
               </div>
+            </div>
 
-          </MaxWidthWrapper>
+            {/* Customer Review */}
+            <div className="flex flex-col flex-auto gap-4 bg-fuchsia-50 p-6 sm:p-8 lg:p-16 rounded-t-[2rem]lg:rounded-tr-none lg:rounded-l-[2rem]">
+              <div className="flex gap-0.5 mb-2 justify-center lg:justify-start">
+                <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
+                <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
+                <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
+                <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
+                <Star className="size-5 text-fuchsia-600 fill-fuchsia-600" />
+              </div>
+              <p className="text-base sm:text-lg lg:text-lg/8 font-medium tracking-tight text-fuchsia-950 text-center lg:text-left text-pretty">
+                PingPanda has been paying off our SaaS. Nice to have simple way to see how we are doing day to day makes our life easier.
+              </p>
+
+              <div className="flex flex-col justify-center lg:justify-start sm:flex-row items-center sm:items-start gap-4 mt-2">
+                <Image
+                  src={"/user-1.png"}
+                  alt="user-2"
+                  width={48}
+                  height={48}
+                  className="rounded-full object-cover"
+                />
+                <div className="flex flex-col items-center sm:items-start">
+                  <p className="font-semibold flex items-center">
+                    Kal Durant
+                    <Icons.verficationBadge className="size-4 inline-block ml-1.5" />
+                  </p>
+                  <p className="text-sm text-gray-600">@durakal</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        <ShinnyButton href="/sign-up" className="relative z-10 h-14 w-full max-w-xs text-base shadow-lg transition-shadow duration-300 hover:shadow-xl">
+                          Start for Free Today
+          </ShinnyButton>
+        </MaxWidthWrapper>
       </section>
     </>
   );
