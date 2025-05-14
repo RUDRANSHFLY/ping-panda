@@ -4,6 +4,7 @@ import { db } from "../db/db";
 import { eventCategories, events } from "../db/schema";
 import { desc, eq, and, gte, count } from "drizzle-orm";
 import { startOfMonth } from "date-fns";
+import {z} from "zod"
 
 export const categoryRouter = new Router({
     getEventCategories: privateProcedure.query(async ({ c, ctx }) => {
@@ -83,4 +84,20 @@ export const categoryRouter = new Router({
 
         return c.superjson({ categories: categoriesWithCounts });
     }),
+
+    deleteCategory : privateProcedure.input(z.object({
+        name : z.string()
+    })).mutation(async ({c ,input ,ctx}) => {
+        const {name} = input;
+
+        await db.delete(eventCategories).where(
+            and(
+                eq(eventCategories.name,name),
+                eq(eventCategories.userId,ctx.user?.id ?? "")
+            )
+        );
+
+        return c.json({success : true})
+    })
+
 });
