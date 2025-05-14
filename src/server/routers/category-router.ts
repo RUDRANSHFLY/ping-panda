@@ -5,6 +5,8 @@ import { eventCategories, events } from "../db/schema";
 import { desc, eq, and, gte, count } from "drizzle-orm";
 import { startOfMonth } from "date-fns";
 import {z} from "zod"
+import { CATEGORY_NAME_VALIDATION } from "@/lib/validators/category-validator";
+import { parseColor } from "@/lib/utils";
 
 export const categoryRouter = new Router({
     getEventCategories: privateProcedure.query(async ({ c, ctx }) => {
@@ -98,6 +100,41 @@ export const categoryRouter = new Router({
         );
 
         return c.json({success : true})
+    }),
+
+    createCategory : privateProcedure.input(z.object({
+        name : CATEGORY_NAME_VALIDATION,
+        color: z
+            .string()
+            .min(1, {
+              message: "Color is required.",
+            })
+            .regex(/#[0-9A-F]{6}$/, {
+              message: "Invalid color format.",
+            }),
+          emoji: z
+            .string()
+            .emoji({
+              message: "Invalid emoji.",
+            })
+            .optional(),
+    })).mutation(async ({c,ctx,input}) => {
+        const {user} = ctx;
+        const {color,name,emoji} = input;
+
+        const eventCategory = await db
+        .insert( eventCategories)
+        .values({
+            name : name.toLowerCase(),
+            color : parseColor(color),
+            emoji: emoji ?? "", 
+            userId : user?.id || "default-user-id",
+        })
+
+
+
+        return c.json({sucess : true})
+
     })
 
 });
