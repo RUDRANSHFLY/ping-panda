@@ -121,7 +121,8 @@ export const categoryRouter = new Router({
     })).mutation(async ({c,ctx,input}) => {
         const {user} = ctx;
         const {color,name,emoji} = input;
-
+        
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         const eventCategory = await db
         .insert( eventCategories)
         .values({

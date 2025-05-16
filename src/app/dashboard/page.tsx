@@ -30,7 +30,7 @@ const Page = async () => {
     return (
         <DashboardPage title='Dashboard' cta={(
             <CreateEventCategoryModal>
-                <Button>
+                <Button className='w-full sm:w-fit'>
                     <PlusIcon className="size-4 mr-2" />
                     Add Category
                 </Button>

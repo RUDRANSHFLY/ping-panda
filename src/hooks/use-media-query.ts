@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export const useMediaQuery = () => {
     const [device, setDevice] = useState<"mobile" | "tablet" | "desktop" | null>(null)
-
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     const [deminsions, setDeminsions] = useState<{
         width: number,
         height: number
