@@ -9,6 +9,7 @@ import { format, formatDistanceToNow } from "date-fns";
 import { ArrowRight, BarChart2, Clock, Database, Trash2 } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
+import DashobardEmptyState from "./dashboard-empty-state";
 
 const DashboardPageContent = () => {
   const [deletingCategory, setDeletingCategory] = useState<string | null>(null);
@@ -22,17 +23,19 @@ const DashboardPageContent = () => {
     },
   });
 
-  const {mutate : deleteCategory , isPending : isDeletingCategory} = useMutation({
-    mutationFn : async (name : string) => {
-      await client.category.deleteCategory.$post({
-        name
-      })
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({queryKey : ['user-event-categories']})
-      setDeletingCategory(null)
-    },
-  })
+  const { mutate: deleteCategory, isPending: isDeletingCategory } = useMutation(
+    {
+      mutationFn: async (name: string) => {
+        await client.category.deleteCategory.$post({
+          name,
+        });
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({ queryKey: ["user-event-categories"] });
+        setDeletingCategory(null);
+      },
+    }
+  );
 
   if (isEventCategoriesLoading) {
     return (
@@ -43,7 +46,11 @@ const DashboardPageContent = () => {
   }
 
   if (!categories || categories.length === 0) {
-    return <div>Empty State</div>;
+    return (
+      <>
+        <DashobardEmptyState />
+      </>
+    );
   }
 
   return (
@@ -122,29 +129,40 @@ const DashboardPageContent = () => {
           </li>
         ))}
       </ul>
-      <Modal showModal={!!deletingCategory} setShowModal={() => setDeletingCategory(null)}
-          className="max-w-md p-8"
-        >
-          <div className="space-y-6">
+      <Modal
+        showModal={!!deletingCategory}
+        setShowModal={() => setDeletingCategory(null)}
+        className="max-w-md p-8"
+      >
+        <div className="space-y-6">
           <div>
             <h2 className="text-lg/7 font-medium tracking-tight text-gray-950">
               Delete Category
             </h2>
             <p>
-              Are you sure to delete the category {deletingCategory}?
-              This action cannot be undone.
+              Are you sure to delete the category {deletingCategory}? This
+              action cannot be undone.
             </p>
           </div>
 
           <div className="flex justify-end space-x-3 pt-4 border-t">
-            <Button variant={"outline"} onClick={() => setDeletingCategory(null)}>
+            <Button
+              variant={"outline"}
+              onClick={() => setDeletingCategory(null)}
+            >
               Cancel
-              </Button>
-              <Button variant={"destructive"} disabled={isDeletingCategory} onClick={() => deletingCategory && deleteCategory(deletingCategory as string)}>
-                {isDeletingCategory ? "Deleting..." : "Delete"}
-              </Button>
+            </Button>
+            <Button
+              variant={"destructive"}
+              disabled={isDeletingCategory}
+              onClick={() =>
+                deletingCategory && deleteCategory(deletingCategory as string)
+              }
+            >
+              {isDeletingCategory ? "Deleting..." : "Delete"}
+            </Button>
           </div>
-          </div>
+        </div>
       </Modal>
     </>
   );

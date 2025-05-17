@@ -59,7 +59,11 @@ const EMOJI_OPTIONS = [
   { emoji: "🔔", label: "Notification" },
 ];
 
-const CreateEventCategoryModal = ({ children }: PropsWithChildren) => {
+interface CreateEventCategoryModalProps extends PropsWithChildren{
+  containerClassName?: string;
+}
+
+const CreateEventCategoryModal = ({ children , containerClassName }: CreateEventCategoryModalProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const {
@@ -68,31 +72,32 @@ const CreateEventCategoryModal = ({ children }: PropsWithChildren) => {
     handleSubmit,
     formState: { errors },
     setValue,
+    reset,
   } = useForm({
     resolver: zodResolver(EVENT_CATEGORY_VALIDATOR),
   });
 
   const color = watch("color");
-  const selectedEmoji = watch("emoji")
+  const selectedEmoji = watch("emoji");
 
-  const {mutate : createEventCategory , isPending } = useMutation({
-    mutationFn : async (data : EventCategoryForm) => {
+  const { mutate: createEventCategory, isPending } = useMutation({
+    mutationFn: async (data: EventCategoryForm) => {
       await client.category.createCategory.$post(data);
     },
-    onSuccess : () => {
-      queryClient.invalidateQueries({queryKey :["user-event-categories"]})
-      setIsOpen(false)
-    }
-  })
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-event-categories"] });
+      setIsOpen(false);
+      reset({name : "",color : "",emoji : ""})
+    },
+  });
 
- 
   const onSubmit = (data: EventCategoryForm) => {
     createEventCategory(data);
   };
 
   return (
     <>
-      <div onClick={() => setIsOpen(true)}>{children}</div>
+      <div className={containerClassName} onClick={() => setIsOpen(true)}>{children}</div>
 
       <Modal
         className="max-w-xl p-8"
@@ -131,6 +136,7 @@ const CreateEventCategoryModal = ({ children }: PropsWithChildren) => {
               <div className="flex flex-wrap gap-3">
                 {COLOR_OPTIONS.map((premadeColor) => (
                   <Button
+                  type={"button"}
                     key={premadeColor}
                     className={cn(
                       `bg-[${premadeColor}]`,
@@ -153,8 +159,9 @@ const CreateEventCategoryModal = ({ children }: PropsWithChildren) => {
             <div>
               <Label>Color</Label>
               <div className="flex flex-wrap gap-3">
-                {EMOJI_OPTIONS.map(({emoji, label}) => (
+                {EMOJI_OPTIONS.map(({ emoji, label }) => (
                   <Button
+                    type="button"
                     key={label}
                     className={cn(
                       "size-10 flex items-center justify-center text-xl rounded-md transition-all",
@@ -162,7 +169,7 @@ const CreateEventCategoryModal = ({ children }: PropsWithChildren) => {
                         ? "bg-fuchsia-100 ring-2 ring-fuchsia-700 scale-110"
                         : "bg-fuchsia-100 hover:bg-fuchsia-200"
                     )}
-                    onClick={() => setValue("emoji",emoji)}
+                    onClick={() => setValue("emoji", emoji)}
                   >
                     {emoji}
                   </Button>
@@ -177,13 +184,16 @@ const CreateEventCategoryModal = ({ children }: PropsWithChildren) => {
           </div>
 
           <div className="flex justify-end space-x-3 pt-4 border-t">
-              <Button type="button" variant={"outline"} onClick={() => setIsOpen(false)}>
-                Cancel
-                </Button>
-                <Button type="submit" disabled={isPending}>
-                  {isPending ? "Creating..." : "Create category"}
-                
-                </Button>
+            <Button
+              type="button"
+              variant={"outline"}
+              onClick={() => setIsOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Creating..." : "Create category"}
+            </Button>
           </div>
         </form>
       </Modal>

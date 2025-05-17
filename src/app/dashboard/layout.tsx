@@ -4,10 +4,11 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import Modal from "@/components/ui/modal";
 import { cn } from "@/lib/utils";
 import { UserButton } from "@clerk/nextjs";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Gem, Home, Key, LucideIcon, Menu, Settings, X } from "lucide-react";
 import Link from "next/link";
 import { PropsWithChildren, useState } from "react";
-import { Drawer } from "vaul";
+
 
 interface SideBarItem {
   href: string;

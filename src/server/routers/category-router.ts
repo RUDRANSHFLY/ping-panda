@@ -4,7 +4,7 @@ import { db } from "../db/db";
 import { eventCategories, events } from "../db/schema";
 import { desc, eq, and, gte, count } from "drizzle-orm";
 import { startOfMonth } from "date-fns";
-import {z} from "zod"
+import { z } from "zod"
 import { CATEGORY_NAME_VALIDATION } from "@/lib/validators/category-validator";
 import { parseColor } from "@/lib/utils";
 
@@ -87,55 +87,86 @@ export const categoryRouter = new Router({
         return c.superjson({ categories: categoriesWithCounts });
     }),
 
-    deleteCategory : privateProcedure.input(z.object({
-        name : z.string()
-    })).mutation(async ({c ,input ,ctx}) => {
-        const {name} = input;
+    deleteCategory: privateProcedure.input(z.object({
+        name: z.string()
+    })).mutation(async ({ c, input, ctx }) => {
+        const { name } = input;
 
         await db.delete(eventCategories).where(
             and(
-                eq(eventCategories.name,name),
-                eq(eventCategories.userId,ctx.user?.id ?? "")
+                eq(eventCategories.name, name),
+                eq(eventCategories.userId, ctx.user?.id ?? "")
             )
         );
 
-        return c.json({success : true})
+        return c.json({ success: true })
     }),
 
-    createCategory : privateProcedure.input(z.object({
-        name : CATEGORY_NAME_VALIDATION,
+    createCategory: privateProcedure.input(z.object({
+        name: CATEGORY_NAME_VALIDATION,
         color: z
             .string()
             .min(1, {
-              message: "Color is required.",
+                message: "Color is required.",
             })
             .regex(/#[0-9A-F]{6}$/, {
-              message: "Invalid color format.",
+                message: "Invalid color format.",
             }),
-          emoji: z
+        emoji: z
             .string()
             .emoji({
-              message: "Invalid emoji.",
+                message: "Invalid emoji.",
             })
             .optional(),
-    })).mutation(async ({c,ctx,input}) => {
-        const {user} = ctx;
-        const {color,name,emoji} = input;
-        
+    })).mutation(async ({ c, ctx, input }) => {
+        const { user } = ctx;
+        const { color, name, emoji } = input;
+
         /* eslint-disable @typescript-eslint/no-unused-vars */
         const eventCategory = await db
-        .insert( eventCategories)
-        .values({
-            name : name.toLowerCase(),
-            color : parseColor(color),
-            emoji: emoji ?? "", 
-            userId : user?.id || "default-user-id",
-        })
+            .insert(eventCategories)
+            .values({
+                name: name.toLowerCase(),
+                color: parseColor(color),
+                emoji: emoji ?? "",
+                userId: user?.id || "default-user-id",
+            })
 
 
 
-        return c.json({sucess : true})
+        return c.json({ sucess: true })
 
+    }),
+
+
+    insertQuickStartCategories: privateProcedure.mutation(async ({ c, ctx }) => {
+        const { user } = ctx;
+        const data = [
+            {
+                name: "bug",
+                emoji: "🪲",
+                color: 0xff6b6b
+            },
+            {
+                name: "Sale",
+                emoji: "💴",
+                color: 0xffeb3b
+            },
+            {
+                name: "Question",
+                emoji: "🤔",
+                color: 0x6c5ce7
+            }
+        ]
+
+        const categoriesToInsert = data.map((category) => ({
+            ...category,
+            userId: user?.id || "",
+        }))
+
+        const categories = await db.insert(eventCategories).values(categoriesToInsert).returning();
+
+        return c.json({sucess : true , count : categories.length})
     })
 
 });
