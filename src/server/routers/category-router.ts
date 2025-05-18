@@ -7,6 +7,7 @@ import { startOfMonth } from "date-fns";
 import { z } from "zod"
 import { CATEGORY_NAME_VALIDATION } from "@/lib/validators/category-validator";
 import { parseColor } from "@/lib/utils";
+import { HTTPException } from "hono/http-exception";
 
 export const categoryRouter = new Router({
     getEventCategories: privateProcedure.query(async ({ c, ctx }) => {
@@ -166,7 +167,41 @@ export const categoryRouter = new Router({
 
         const categories = await db.insert(eventCategories).values(categoriesToInsert).returning();
 
-        return c.json({sucess : true , count : categories.length})
+        return c.json({ sucess: true, count: categories.length })
+    }),
+
+    pollCategory: privateProcedure.input(z.object({
+        name: CATEGORY_NAME_VALIDATION
+    })).query(async ({ c, ctx, input }) => {
+        const { name } = input;
+        const userId = ctx.user?.id || "";
+        const category = await db.select().from(eventCategories).where(
+            and(
+                eq(eventCategories.name, name),
+                eq(eventCategories.userId, userId)
+            )
+        )
+
+        if (category.length === 0) {
+            throw new HTTPException(404, {
+                message: `Category ${name} not found`
+            })
+        }
+
+        const categoryCount = await db.select({ count: count() }).from(events).where(
+            and(
+                eq(events.eventCategory, category[0]?.id || ""),
+                eq(events.userId, userId)
+            )
+        );
+
+
+        const hasEvents = (categoryCount[0]?.count || 0 ) > 0;
+
+
+        return c.json({
+            hasEvents
+        })
     })
 
 });
