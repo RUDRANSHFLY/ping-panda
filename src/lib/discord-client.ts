@@ -5,7 +5,7 @@ import {
     Routes,
     APIEmbed
 } from "discord-api-types/v10"
-import { Route } from "lucide-react"
+
 
 export class DiscordClient {
     private rest : REST

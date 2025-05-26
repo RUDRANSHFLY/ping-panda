@@ -8,6 +8,20 @@
       "when": 1746846762820,
       "tag": "0000_open_lightspeed",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1748263032932,
+      "tag": "0001_white_zaladane",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1748265032824,
+      "tag": "0002_famous_junta",
+      "breakpoints": true
     }
   ]
 }

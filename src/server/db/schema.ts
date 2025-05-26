@@ -60,6 +60,7 @@ export const eventCategoriesRelations = relations(eventCategories, ({ one, many 
 export const events = pgTable(
   "event", {
   id: uuid("id").defaultRandom().primaryKey(),
+  name: text("name").notNull(),
   formattedMessage: text("formattedMessage").notNull(),
   fields: json("fields").notNull(),
   deliveryStatus: eventStatusEnum("deliveryStatus").default("pending").notNull(),
@@ -76,14 +77,14 @@ export const events = pgTable(
 );
 
 
-export const eventsRelations = relations(events,({one}) => ({
-  usser : one(users,{
-    fields : [events.userId],
-    references : [users.id]
+export const eventsRelations = relations(events, ({ one }) => ({
+  usser: one(users, {
+    fields: [events.userId],
+    references: [users.id]
   }),
-  eventCategory : one(eventCategories,{
-    fields : [events.eventCategory],
-    references : [eventCategories.id]
+  eventCategory: one(eventCategories, {
+    fields: [events.eventCategory],
+    references: [eventCategories.id]
   })
 }))
 
@@ -92,19 +93,20 @@ export const quotas = pgTable(
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("user").notNull().references(() => users.id),
   year: integer("year").notNull(),
-  month : integer("month").notNull(), 
-  count : integer("count").default(0).notNull(), 
+  month: integer("month").notNull(),
+  count: integer("count").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 },
   (table) => [
     index("Quota_userId_idx").on(table.userId),
+     uniqueIndex("quotas_user_unique").on(table.userId, table.year,table.month)
   ]
 )
 
-export const quotaRelations = relations(quotas,({one}) => ({
-  user : one(users,{
+export const quotaRelations = relations(quotas, ({ one }) => ({
+  user: one(users, {
     fields: [quotas.userId],
-    references:[users.id]
+    references: [users.id]
   })
 }));

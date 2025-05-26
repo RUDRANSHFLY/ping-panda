@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "quotas_user_unique" ON "quota" USING btree ("user","year","month");
