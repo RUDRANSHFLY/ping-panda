@@ -3,7 +3,7 @@ import { privateProcedure } from "../jstack";
 import { db } from "../db/db";
 import { eventCategories, events } from "../db/schema";
 import { desc, eq, and, gte, count } from "drizzle-orm";
-import { startOfMonth } from "date-fns";
+import { startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import { z } from "zod"
 import { CATEGORY_NAME_VALIDATION } from "@/lib/validators/category-validator";
 import { parseColor } from "@/lib/utils";
@@ -149,12 +149,12 @@ export const categoryRouter = new Router({
                 color: 0xff6b6b
             },
             {
-                name: "Sale",
+                name: "sale",
                 emoji: "💴",
                 color: 0xffeb3b
             },
             {
-                name: "Question",
+                name: "question",
                 emoji: "🤔",
                 color: 0x6c5ce7
             }
@@ -196,12 +196,90 @@ export const categoryRouter = new Router({
         );
 
 
-        const hasEvents = (categoryCount[0]?.count || 0 ) > 0;
+        const hasEvents = (categoryCount[0]?.count || 0) > 0;
 
 
         return c.json({
             hasEvents
         })
+    }),
+
+    getEventsByCategoryName: privateProcedure.input(z.object({
+        name: CATEGORY_NAME_VALIDATION,
+        page: z.number(),
+        limit: z.number().max(50),
+        timeRange: z.enum(["today", "week", "month"])
+    })).query(async ({ c, input, ctx }) => {
+        const { limit, name, page, timeRange } = input
+
+        const now = new Date()
+        let startDate: Date | undefined;
+
+        switch (timeRange) {
+            case "today":
+                startDate = startOfDay(now)
+                break;
+            case "week":
+                startDate = startOfWeek(now, {
+                    weekStartsOn: 0
+                })
+                break;
+            case "month":
+                startDate = startOfMonth(now)
+                break;
+            default:
+                throw new Error("Invalid timeRange value");
+        }
+
+        if (!startDate) {
+            throw new Error("startDate is undefined");
+        }
+
+        const [eventsList, countResult, distinctFields] = await Promise.all([
+            db.select().from(events).where(
+                and(eq(events.eventCategory, name),
+                    eq(events.userId, ctx.user?.id ?? ""),
+                    gte(events.createdAt, startDate)
+                )
+            ).orderBy(events.createdAt)
+                .offset((page - 1) * limit)
+                .limit(limit),
+
+            db
+                .select({ count: count() })
+                .from(events)
+                .where(
+                    and(
+                        eq(events.eventCategory, name),
+                        eq(events.userId, ctx.user?.id ?? ""),
+                        gte(events.createdAt, startDate)
+                    )
+                ),
+            db.selectDistinctOn([events.fields]).from(events).where(
+                and(eq(events.eventCategory, name),
+                    eq(events.userId, ctx.user?.id ?? ""),
+                    gte(events.createdAt, startDate)
+                )
+            )
+                .then((eventsLists) => {
+                    const fieldNames = new Set<string>();
+                    eventsLists.forEach((event) => {
+                        Object.keys(event.fields as object).forEach((fieldName) => {
+                            fieldNames.add(fieldName)
+                        })
+                    })
+
+                    return fieldNames.size
+                })
+        ])
+
+        return c.superjson({
+            events : eventsList,
+            eventsCount : countResult,
+            uniqueFields : distinctFields
     })
+    })
+
+
 
 });
