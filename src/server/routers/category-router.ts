@@ -244,9 +244,7 @@ export const categoryRouter = new Router({
             ).orderBy(events.createdAt)
                 .offset((page - 1) * limit)
                 .limit(limit),
-
-            db
-                .select({ count: count() })
+                db.select({ count: count() })
                 .from(events)
                 .where(
                     and(
@@ -255,29 +253,30 @@ export const categoryRouter = new Router({
                         gte(events.createdAt, startDate)
                     )
                 ),
-            db.selectDistinctOn([events.fields]).from(events).where(
+            db.select({fields :events.fields}).from(events).where(
                 and(eq(events.eventCategory, name),
                     eq(events.userId, ctx.user?.id ?? ""),
                     gte(events.createdAt, startDate)
                 )
-            )
-                .then((eventsLists) => {
+            ).then((eventsList) => {
                     const fieldNames = new Set<string>();
-                    eventsLists.forEach((event) => {
-                        Object.keys(event.fields as object).forEach((fieldName) => {
-                            fieldNames.add(fieldName)
+                    if (eventsList) {
+                        eventsList.forEach((event) => {
+                            Object.keys(event.fields as object).forEach((fieldName) => {
+                                fieldNames.add(fieldName)
+                            })
                         })
-                    })
+                    }
 
                     return fieldNames.size
                 })
         ])
 
         return c.superjson({
-            events : eventsList,
-            eventsCount : countResult,
-            uniqueFields : distinctFields
-    })
+            events: eventsList,
+            eventsCount: countResult[0]?.count,
+            uniqueFields: distinctFields
+        });
     })
 
 
