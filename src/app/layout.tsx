@@ -10,7 +10,7 @@ const alkatara = Alkatra({
 });
 
 export const metadata: Metadata = {
-  title: "JStack App",
+  title: "Ping Panda",
   description: "Created using JStack",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };

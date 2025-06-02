@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import type { InferSelectModel } from "drizzle-orm";
 import { eventCategories } from "@/server/db/schema";
 import { useQuery } from "@tanstack/react-query";
@@ -10,6 +10,7 @@ import { client } from "@/lib/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Card from "@/components/ui/card";
 import { BarChart } from "lucide-react";
+import { isAfter, isThisMonth, isThisWeek, isToday, startOfMonth, startOfWeek } from "date-fns";
 
 interface CategoryPageContentProps {
   hasEvents: boolean;
@@ -34,7 +35,7 @@ const CategoryPageContent = ({
     pageSize: limit,
   });
 
-  const { data: pollingData } = useQuery({
+  const { data:  pollingData } = useQuery({
     queryKey: ["category", category.name, "hasEvents"],
     initialData: { hasEvents: initialHasEvents },
   });
@@ -64,6 +65,65 @@ const CategoryPageContent = ({
     refetchOnWindowFocus: false,
     enabled: pollingData.hasEvents,
   });
+
+
+  const numricFieldsSums = useMemo(() => {
+    if(!data?.events || data.events.length === 0){
+      return {}
+    };
+
+    const sums: Record<string,{
+      total : number,
+      thisWeek : number,
+      thisMonth : number,
+      today : number,
+    }> = {
+
+    } ;
+    
+
+    const now = new Date()
+    const weekStart = startOfWeek(now,{weekStartsOn : 0})
+    const monthStart = startOfMonth(now)
+
+    data?.events.forEach((event) => {
+      const eventDate = event.createdAt;
+
+      Object.entries(event.fields as object).forEach(([field,value]) => {
+        if(typeof value === "number"){
+          if(!sums[field]){
+            sums[field] = {total : 0 , thisWeek : 0 , thisMonth : 0 , today : 0}
+          }
+
+          sums[field].total += value
+
+          if (
+            isAfter(eventDate,weekStart) || 
+            eventDate.getTime() === weekStart.getTime()
+          ){
+            sums[field].thisWeek += value
+          }
+
+          if (
+            isAfter(eventDate,monthStart) || 
+            eventDate.getTime() === monthStart.getTime()
+          ) {
+            sums[field].thisMonth += value
+          }
+
+          if(isToday(eventDate)){
+            sums[field].today += value
+          }
+
+        }
+
+
+      })
+    })
+    
+  },[data?.events])
+
+
   return (
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={(value) => {

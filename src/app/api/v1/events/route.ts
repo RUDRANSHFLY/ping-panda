@@ -13,7 +13,7 @@ const REQUEST_VALIDATOR = z.object({
     description: z.string().optional(),
 }).strict()
 
-export const POST = async (req: NextRequest) => {
+export const POST = async (req: NextRequest):Promise<NextResponse<{ message: string; }> | null> => {
 
 
     try {

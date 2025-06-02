@@ -213,7 +213,7 @@ export const categoryRouter = new Router({
         const { limit, name, page, timeRange } = input
 
         const now = new Date()
-        let startDate: Date | undefined;
+        let startDate: Date
 
         switch (timeRange) {
             case "today":
@@ -235,42 +235,52 @@ export const categoryRouter = new Router({
             throw new Error("startDate is undefined");
         }
 
+        const eventIdArr = await db.select({ id: eventCategories.id }).from(eventCategories).where(eq(eventCategories.name, name)).limit(1);
+
+
+        const universalStartDate = new Date(startDate.toUTCString())
+
         const [eventsList, countResult, distinctFields] = await Promise.all([
             db.select().from(events).where(
-                and(eq(events.eventCategory, name),
+                and(eq(events.eventCategory, eventIdArr[0]?.id || ""),
                     eq(events.userId, ctx.user?.id ?? ""),
-                    gte(events.createdAt, startDate)
+                    gte(events.createdAt, universalStartDate)
                 )
             ).orderBy(events.createdAt)
                 .offset((page - 1) * limit)
                 .limit(limit),
-                db.select({ count: count() })
+            db.select({ count: count() })
                 .from(events)
                 .where(
                     and(
-                        eq(events.eventCategory, name),
+                        eq(events.eventCategory, eventIdArr[0]?.id || ""),
                         eq(events.userId, ctx.user?.id ?? ""),
-                        gte(events.createdAt, startDate)
+                        gte(events.createdAt, universalStartDate)
                     )
                 ),
-            db.select({fields :events.fields}).from(events).where(
-                and(eq(events.eventCategory, name),
+
+            db.select({ fields: events.fields }).from(events).where(
+                and(eq(events.eventCategory, eventIdArr[0]?.id || ""),
                     eq(events.userId, ctx.user?.id ?? ""),
-                    gte(events.createdAt, startDate)
+                    gte(events.createdAt, universalStartDate)
                 )
             ).then((eventsList) => {
-                    const fieldNames = new Set<string>();
-                    if (eventsList) {
-                        eventsList.forEach((event) => {
-                            Object.keys(event.fields as object).forEach((fieldName) => {
-                                fieldNames.add(fieldName)
-                            })
+                const fieldNames = new Set<string>();
+                if (eventsList) {
+                    eventsList.forEach((event) => {
+                        Object.keys(event.fields as object).forEach((fieldName) => {
+                            fieldNames.add(fieldName)
                         })
-                    }
+                    })
+                }
 
-                    return fieldNames.size
-                })
+                return fieldNames.size
+            })
         ])
+
+
+
+
 
         return c.superjson({
             events: eventsList,
