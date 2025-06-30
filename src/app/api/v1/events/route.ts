@@ -13,8 +13,7 @@ const REQUEST_VALIDATOR = z.object({
     description: z.string().optional(),
 }).strict()
 
-export const POST = async (req: NextRequest):Promise<NextResponse<{ message: string; }> | null> => {
-
+export const POST = async (req: NextRequest):Promise<NextResponse<{ message: string; }>> => {
 
     try {
 
@@ -108,8 +107,9 @@ export const POST = async (req: NextRequest):Promise<NextResponse<{ message: str
         try {
             requestData = await req.json();
         } catch (error) {
+            console.log(error)
             return NextResponse.json({
-                message: "Invalid JSON request body"
+                message: "Invalid JSON request body error"
             }, { status: 400 })
         }
 
@@ -160,7 +160,10 @@ export const POST = async (req: NextRequest):Promise<NextResponse<{ message: str
         }).returning();
 
         if (event.length === 0 || event[0] === undefined) {
-            return null;
+            return NextResponse.json(
+                {message : "Event Doesnt Exist"},
+                {status : 500}
+            );
         }
 
         try {
@@ -195,7 +198,7 @@ export const POST = async (req: NextRequest):Promise<NextResponse<{ message: str
             console.log(error);
 
             return NextResponse.json({
-                message: "Error processing the event. Please try again later.",
+                message: `Error processing the event. Please try again later. error : ${error}`,
                 eventId: event[0]?.id,
             }, {
                 status: 500,
