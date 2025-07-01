@@ -211,6 +211,7 @@ export const categoryRouter = new Router({
         timeRange: z.enum(["today", "week", "month"])
     })).query(async ({ c, input, ctx }) => {
         const { limit, name, page, timeRange } = input
+        const {user} = ctx;
 
         const now = new Date()
         let startDate: Date
@@ -235,7 +236,7 @@ export const categoryRouter = new Router({
             throw new Error("startDate is undefined");
         }
 
-        const eventIdArr = await db.select({ id: eventCategories.id }).from(eventCategories).where(eq(eventCategories.name, name)).limit(1);
+        const eventIdArr = await db.select({ id: eventCategories.id }).from(eventCategories).where(and(eq(eventCategories.name, name),eq(eventCategories.userId,user?.id ?? ""))).limit(1);
 
 
         const universalStartDate = new Date(startDate.toUTCString())

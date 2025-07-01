@@ -91,6 +91,8 @@ const CategoryPageContent = ({
     enabled: pollingData.hasEvents,
   });
 
+    
+
   const columns: ColumnDef<Event>[] = useMemo(
     () => [
       {
