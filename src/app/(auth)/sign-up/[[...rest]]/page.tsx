@@ -4,7 +4,7 @@ import React from 'react'
 const Page = () => {
   return (
     <div className='w-full flex-1 flex items-center justify-center'>
-        <SignUp />
+        <SignUp fallbackRedirectUrl={"/welcome"} forceRedirectUrl={"/redirect"}/>
     </div>
   )
 }

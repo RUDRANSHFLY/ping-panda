@@ -32,7 +32,7 @@ const Page = async ({ searchParams }: PageProps) => {
     .limit(1);
 
   if (user.length === 0) {
-    redirect("/sign-in");
+    redirect("/welcome");
   }
 
   const search = await searchParams;
