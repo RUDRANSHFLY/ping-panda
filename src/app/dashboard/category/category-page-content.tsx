@@ -68,8 +68,7 @@ const CategoryPageContent = ({
     queryKey: ["category", category.name, "hasEvents"],
     initialData: { hasEvents: initialHasEvents },
   });
-  
-  
+
   const { data, isFetching } = useQuery({
     queryKey: [
       "events",
@@ -91,8 +90,6 @@ const CategoryPageContent = ({
     refetchOnWindowFocus: false,
     enabled: pollingData.hasEvents,
   });
-
- 
 
   const columns: ColumnDef<Event>[] = useMemo(
     () => [
@@ -126,7 +123,7 @@ const CategoryPageContent = ({
             accessorFn: (row: Event) => row.fields as object,
             header: field,
             cell: ({ row }: { row: Row<Event> }) =>
-              (row.original.fields as Record<string, string | number | Date>)[field] || "-",
+              (row.original.fields as Record<string, unknown>)[field] || "-",
           }))
         : []),
       {
@@ -143,7 +140,7 @@ const CategoryPageContent = ({
                 row.getValue("deliveryStatus") === "pending",
             })}
           >
-            {row.getValue("deliveryStatus")}
+            {new String(row.getValue("deliveryStatus")).toUpperCase()}
           </span>
         ),
       },
@@ -161,7 +158,7 @@ const CategoryPageContent = ({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
-    pageCount: Math.ceil((data?.eventsCount || 0) / pagination.pageIndex),
+    pageCount: Math.ceil((data?.eventsCount || 0) / pagination.pageSize),
     onPaginationChange: setPagination,
     state: {
       sorting,
@@ -206,7 +203,7 @@ const CategoryPageContent = ({
           ) {
             sums[field].thisWeek += value;
           }
-          
+
           if (
             isAfter(eventDate, monthStart) ||
             eventDate.getTime() === monthStart.getTime()
@@ -220,10 +217,9 @@ const CategoryPageContent = ({
         }
       });
     });
-    
+
     return sums;
   }, [data?.events]);
-
 
   if (!pollingData.hasEvents) {
     return <EmptyCategoryState categoryName={category.name} />;
@@ -233,15 +229,15 @@ const CategoryPageContent = ({
     if (Object.keys(numericFieldsSums).length === 0) {
       return null;
     }
-    
+
     return Object.entries(numericFieldsSums).map(([field, sums]) => {
       const relevantSum =
-      activeTab === "today"
+        activeTab === "today"
           ? sums.today
           : activeTab === "week"
           ? sums.thisWeek
           : sums.thisMonth;
-          return (
+      return (
         <Card key={field}>
           <div className="flex flow-row items-center justify-between space-y-0 pb-2">
             <p className="text-sm/6 font-medium">
@@ -363,6 +359,25 @@ const CategoryPageContent = ({
             </TableBody>
           </Table>
         </Card>
+      </div>
+
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant={"outline"}
+          disabled={!table.getCanPreviousPage() || isFetching}
+          size={"sm"}
+          onClick={() => table.previousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant={"outline"}
+          disabled={!table.getCanNextPage() || isFetching}
+          size={"sm"}
+          onClick={() => table.nextPage()}
+        >
+          Next
+        </Button>
       </div>
     </div>
   );

@@ -1,12 +1,15 @@
 import { Router } from "jstack";
-import { privateProcedure } from "../jstack";
+import { privateProcedure, publicProcedure } from "../jstack";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "../db/db";
 import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
 
+export const dynamic = "force-dynamic"
+
 export const authRouter = new Router({
-    getDatabaseSyncStatus: privateProcedure.query(async ({ c  }) => {
+    getDatabaseSyncStatus: publicProcedure .query(async ({ c  }) => {
+       
         const auth = await currentUser()
 
         if(!auth){
@@ -18,6 +21,8 @@ export const authRouter = new Router({
             .from(users)
             .where(eq(users.externalId,auth.id))
             .limit(1)
+
+        
 
         if(user.length === 0){
             await db.insert(users).values({
