@@ -4,8 +4,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import Modal from "@/components/ui/modal";
 import { cn } from "@/lib/utils";
 import { UserButton } from "@clerk/nextjs";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Gem, Home, Key, LucideIcon, Menu, Settings, X } from "lucide-react";
+import { Gem, Home, Key, LucideIcon, Settings, X } from "lucide-react";
 import Link from "next/link";
 import { PropsWithChildren, useState } from "react";
 
@@ -49,6 +48,11 @@ const SIDEBAR_ITEMS: SidebarCategory[] = [
         href: "/dashboard/api-key",
         icon: Key,
         text: "API Key",
+      },
+      {
+        href: "/dashboard/account-settings",
+        icon: Settings,
+        text: "Account Settings",
       },
     ],
   },

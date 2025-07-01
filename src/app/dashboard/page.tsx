@@ -13,9 +13,9 @@ import { createCheckoutSession } from "@/lib/stripe";
 import PaymentSuccessModal from "@/components/payments-success-modal";
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     [key: string]: string | string[] | undefined;
-  };
+  }>;
 }
 
 const Page = async ({ searchParams }: PageProps) => {
@@ -35,7 +35,8 @@ const Page = async ({ searchParams }: PageProps) => {
     redirect("/sign-in");
   }
 
-  const intent = searchParams.intent;
+  const search = await searchParams;
+  const intent = search.intent;
 
   if (intent === "upgrade") {
     const session = await createCheckoutSession({
@@ -48,7 +49,7 @@ const Page = async ({ searchParams }: PageProps) => {
     }
   }
 
-  const sucess = searchParams.success;
+  const sucess = search.success;
 
   return (
     <>

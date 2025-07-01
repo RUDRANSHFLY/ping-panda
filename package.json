@@ -51,6 +51,7 @@
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
     "@types/react-syntax-highlighter": "^15.5.13",
+    "@types/stripe": "^8.0.416",
     "discord-api-types": "^0.38.8",
     "dotenv": "^16.4.5",
     "drizzle-kit": "^0.30.1",

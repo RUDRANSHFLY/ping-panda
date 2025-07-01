@@ -5,7 +5,6 @@ import Heading from '@/components/heading'
 import MaxWidthWrapper from '@/components/max-width-wrapper'
 import { Button } from '@/components/ui/button'
 import { client } from '@/lib/client'
-import { createCheckoutSession } from '@/lib/stripe'
 import { useUser } from '@clerk/nextjs'
 import { useMutation } from '@tanstack/react-query'
 import { CheckIcon } from 'lucide-react'
@@ -50,7 +49,7 @@ const PricingPage = () => {
                     Simple no-tricks pricing
                 </Heading>
                 <p className='mt-6 text-base/7 text-gray-600 max-w-prose text-center text-pretty'>
-                    We hate subscriptions. And chances are, you do too. That's why we offer lifetime access to PingPanda for a one time payemnt period
+                    We hate subscriptions. And chances are, you do too. That&apos;s why we offer lifetime access to PingPanda for a one time payemnt period
                 </p>
             </div>
 
@@ -64,7 +63,7 @@ const PricingPage = () => {
                     </p>
                     <div className='mt-10 flex items-center gap-x-4'>
                         <h4 className='flex-none text-sm font-semibold leading-6 text-fuchsia-600'>
-                            What's included
+                            What&apos;s included
                         </h4>
                         <div className='h-px flex-auto bg-gray-100' />
                     </div>

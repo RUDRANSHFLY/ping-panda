@@ -1,14 +1,14 @@
 import { Router } from "jstack";
-import { privateProcedure, publicProcedure } from "../jstack";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "../db/db";
 import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { publicProcedure } from "../jstack";
 
 export const dynamic = "force-dynamic"
 
 export const authRouter = new Router({
-    getDatabaseSyncStatus: publicProcedure .query(async ({ c  }) => {
+    getDatabaseSyncStatus: publicProcedure.query(async ({ c  }) => {
        
         const auth = await currentUser()
 
