@@ -49,11 +49,13 @@ const Page = async ({ searchParams }: PageProps) => {
     }
   }
 
-  const sucess = search.success;
+  const successPage = search.success === "true";
+
+  console.log(successPage)
 
   return (
     <>
-      {sucess && <PaymentSuccessModal />}
+      {successPage ? (<PaymentSuccessModal defaultOpen />) : null}
       <DashboardPage
         title="Dashboard"
         cta={

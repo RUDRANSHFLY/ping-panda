@@ -10,10 +10,10 @@ import Image from 'next/image';
 import { Button } from './ui/button';
 import { CheckIcon } from 'lucide-react';
 
-const PaymentSuccessModal = () => {
+const PaymentSuccessModal = ({defaultOpen = false} : {defaultOpen : boolean}) => {
   
   const router = useRouter();
-  const [isOpen,setIsOpen] = useState<boolean>(false) 
+  const [isOpen,setIsOpen] = useState<boolean>(defaultOpen) 
   
   
   const {data , isPending} = useQuery({
@@ -26,6 +26,8 @@ const PaymentSuccessModal = () => {
         return query.state.data?.plan === "pro" ? false : 1000
     }
   })
+
+
 
 
   const handleClose = () => {

@@ -280,7 +280,7 @@ export const categoryRouter = new Router({
 
 
 
-
+     
 
         return c.superjson({
             events: eventsList,
